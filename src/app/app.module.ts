@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatButtonModule} from '@angular/material/button';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +13,7 @@ import { UserInfoComponent } from './components/user-info/user-info.component';
 import { BoardComponent } from './components/board/board.component';
 import { MissionsComponent } from './components/missions/missions.component';
 import { FormsModule } from '@angular/forms';
+import { DialogAnimationComponent } from './components/dialog-animation/dialog-animation.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +21,8 @@ import { FormsModule } from '@angular/forms';
     CharectersComponent,
     UserInfoComponent,
     BoardComponent,
-    MissionsComponent
+    MissionsComponent,
+    DialogAnimationComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +30,9 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
     MatCardModule,
     MatListModule,
-    MatDividerModule
+    MatDialogModule,
+    MatDividerModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
