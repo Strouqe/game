@@ -6,7 +6,7 @@ export class User {
     public name: string,
     public currencyBalance: number,
     public currencyIncome: number,
-    public characters: Charecter[],
+    public charecters: Charecter[],
     public missionsCompleated: Mission[],
   ){}
 }

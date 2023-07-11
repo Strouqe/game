@@ -15,19 +15,12 @@ interface MessageData {
   providedIn: 'root',
 })
 export class WebsocketService {
-  // private subject: AnonymousSubject<MessageEvent>;
+
   wsSubscription: Subscription;
   dataChanged = new Subject<ServerData>()
-  // private socket$: Subject<MessageEvent> = webSocket(WS_ENDPOINT);
+
   private subject: WebSocketSubject<MessageEvent>;
-  // private messagesSubject$ = new Subject();
-  // subject = webSocket(WS_ENDPOINT);
-  // public messages$ = this.messagesSubject$.pipe(
-  //   // switchAll(),
-  //   catchError((e) => {
-  //     throw e;
-  //   })
-  // );
+
   message = 'Hello from Client';
 
   constructor() {}
@@ -44,7 +37,7 @@ export class WebsocketService {
     let ws = new WebSocket(url);
 
     let observable = new Observable((obs: Observer<MessageEvent>) => {
-      // ws.onmessage = obs.next.bind(obs);
+      ws.onmessage = obs.next.bind(obs);
       ws.onerror = obs.error.bind(obs);
       ws.onclose = obs.error.bind(obs);
       return ws.close.bind(ws);

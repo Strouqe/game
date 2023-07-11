@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Subject, timeInterval } from 'rxjs';
 import { User } from '../models/user.model';
-import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { WebsocketService } from './websocket.service';
-
 
 const sampleUser: User = {
   name: 'John Doe',
   currencyBalance: 101,
-  currencyIncome: 10,
-  characters: [
+  currencyIncome: 10, // should remove and calculate from charecters
+  charecters: [
     {
-      name: 'Marty',
+      id: 1,
+      name: 'Morty',
       price: 100,
       income: 10,
       image: 'https://res.cloudinary.com/demo/image/twitter/1330457336.jpg',
@@ -23,6 +21,7 @@ const sampleUser: User = {
       },
     },
     {
+      id: 2,
       name: 'Doc',
       price: 100,
       income: 10,
@@ -37,6 +36,7 @@ const sampleUser: User = {
   ],
   missionsCompleated: [
     {
+      id: 1,
       name: 'Dungeon Exploration',
       dificulty: 100,
       reward: 100,
@@ -44,17 +44,7 @@ const sampleUser: User = {
         intelect: 15,
         strength: 15,
         dexterity: 15,
-      }
-    },
-    {
-      name: 'Dungeon Exploration',
-      dificulty: 100,
-      reward: 100,
-      requirements: {
-        intelect: 15,
-        strength: 15,
-        dexterity: 15,
-      }
+      },
     },
   ],
 };
@@ -69,15 +59,34 @@ export interface Message {
 })
 export class UserService {
   userChanged: Subject<User>;
-  message: Subject<Message>;
+  userIncome: number;
   private user: User;
 
   constructor() {
+    this.userChanged = new Subject<User>();
 
+    this.startIncomeGeneration();
   }
 
   fetchUser(): void {
     this.user = sampleUser;
+    this.user.currencyIncome = this.getUserIncome();
     this.userChanged.next(this.user);
+  }
+
+
+
+  private getUserIncome(): number {
+    return this.user.charecters.reduce((acc, charecter) => {
+      return acc + charecter.income;
+    }, 0);
+  }
+
+  private startIncomeGeneration(): void {
+    //timeout or timeInterval(60000).subscribe(() => {}); rxjs might be the right way to handle this
+    setInterval(() => {
+      this.user.currencyBalance += this.user.currencyIncome;
+      this.userChanged.next(this.user);
+    }, 60000);
   }
 }

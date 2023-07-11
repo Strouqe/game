@@ -1,5 +1,6 @@
 export class Charecter {
   constructor(
+    public id: number,
     public name: string,
     public price: number,
     public income: number, // Income per unit of time, can be negative
