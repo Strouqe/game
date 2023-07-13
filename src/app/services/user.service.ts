@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import {
+  BehaviorSubject,
   NEVER,
   Observable,
   Subject,
@@ -20,13 +21,13 @@ import { User } from '../models/user.model';
 const sampleUser: User = {
   name: 'John Doe',
   currencyBalance: 101,
-  currencyIncome: 10, // should remove and calculate from charecters
+  currencyIncome: 40, // should remove and calculate from charecters
   charecters: [
     {
       id: 1,
       name: 'Morty',
       price: 100,
-      income: 10,
+      income: 11,
       image: 'https://res.cloudinary.com/demo/image/twitter/1330457336.jpg',
       fatigue: 0,
       characteristics: {
@@ -39,7 +40,7 @@ const sampleUser: User = {
       id: 2,
       name: 'Doc',
       price: 100,
-      income: 10,
+      income: 12,
       image: 'https://res.cloudinary.com/demo/image/twitter/1330457336.jpg',
       fatigue: 0,
       characteristics: {
@@ -79,15 +80,15 @@ export class UserService {
   incomeGeneratorSubscription: Subscription;
 
   initialCounterState: CounterStateModel;
-  patchCounterState: Subject<Partial<CounterStateModel>>;
+  patchCounterState:  BehaviorSubject<Partial<CounterStateModel>>;
   counterCommands$: any;
   commandFromTick$: Observable<Partial<CounterStateModel>>;
   commandFromReset$: Observable<Partial<CounterStateModel>>;
   counterState$: Observable<CounterStateModel>;
   isTicking$: any;
 
-  trigerStart: EventEmitter<void> = new EventEmitter();
-  trigerPause: EventEmitter<void> = new EventEmitter();
+  trigerStartEvent: EventEmitter<void> = new EventEmitter();
+  trigerPauseEvent: EventEmitter<void> = new EventEmitter();
   // stopBtn = document.querySelector('#stopBtn') as HTMLButtonElement;
   // pauseBtn = document.querySelector('#pauseBtn') as HTMLButtonElement;
 
@@ -105,11 +106,11 @@ export class UserService {
       isTicking: true,
     };
 
-    this.patchCounterState = new Subject<Partial<CounterStateModel>>();
+    this.patchCounterState = new BehaviorSubject<Partial<CounterStateModel>>(this.isTicking$);
 
     this.counterCommands$ = merge(
-      this.trigerStart.pipe(mapTo({ isTicking: true })),
-      this.trigerPause.pipe(mapTo({ isTicking: false })),
+      this.trigerStartEvent.pipe(mapTo({ isTicking: true })),
+      this.trigerPauseEvent.pipe(mapTo({ isTicking: false })),
       // this.stopClick$.pipe(mapTo({ ...this.initialCounterState })),
       this.patchCounterState.asObservable()
     );
@@ -131,29 +132,35 @@ export class UserService {
     );
 
     this.commandFromTick$ = this.isTicking$.pipe(
-      switchMap((isTicking) => (isTicking ? timer(0, 1000) : NEVER)),
+      switchMap((isTicking) => (isTicking ? timer(1000, 1000) : NEVER)),
       withLatestFrom(this.counterState$, (_, counterState) => ({
         count: counterState.count,
       })),
       tap(({ count }) => {
         console.log('count', count);
 
-          this.patchCounterState.next({ count: count + 10 });
+        this.patchCounterState.next({ count: count + this.user.currencyIncome });
 
       })
     );
 
     // this.commandFromReset$ = this.stopClick$.pipe(mapTo({ ...this.initialCounterState }));
 
-    this.incomeGeneratorSubscription = merge(
-      this.commandFromTick$,
-      this.commandFromReset$
-    ).pipe(startWith(this.initialCounterState))
+    this.incomeGeneratorSubscription =
+      this.commandFromTick$.pipe(startWith(this.initialCounterState))
       .subscribe((state) => {
         console.log('state', state);
         this.user.currencyBalance = state.count!;
         this.userChanged.next(this.user);
       });
+  }
+
+  trigerPause(): void {
+    this.trigerPauseEvent.emit();
+  }
+
+  trigerStart(): void {
+    this.trigerStartEvent.emit();
   }
 
   fetchUser(): void {
