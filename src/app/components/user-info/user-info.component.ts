@@ -37,6 +37,10 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       }
     );
     this.userService.fetchUser();
+    // this.userService.incomeGenerator$.subscribe((income) => {
+    //   console.log('income', income);
+    // }
+    // );
   }
 
   ngOnDestroy(): void {
