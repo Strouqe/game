@@ -4,6 +4,7 @@
     <mat-card
       *ngFor="let charecter of charecters"
       class="charecters__list__item"
+      (click)="onAddCharecter(charecter)"
     >
       <img
         src="{{ charecter.image }}"

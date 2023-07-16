@@ -1,7 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Charecter } from 'src/app/models/charecter.model';
+import { User } from 'src/app/models/user.model';
 import { ServerDataService } from 'src/app/services/server-data.service';
+import { UserService } from 'src/app/services/user.service';
 import { WebsocketService } from 'src/app/services/websocket.service';
 
 @Component({
@@ -9,7 +11,7 @@ import { WebsocketService } from 'src/app/services/websocket.service';
   templateUrl: './charecters.component.html',
   styleUrls: ['./charecters.component.scss'],
 })
-export class CharectersComponent implements OnInit {
+export class CharectersComponent implements OnInit, OnDestroy {
 
   charecters: Charecter[];
 
@@ -17,6 +19,7 @@ export class CharectersComponent implements OnInit {
 
   constructor(
     private dataService: ServerDataService,
+    private userService: UserService,
     // public webSocketService: WebsocketService,
 
   ) {
@@ -30,20 +33,14 @@ export class CharectersComponent implements OnInit {
       console.log('Response from websocket: ', charecters);
     });
     console.log('charecters in charecters component ====>', this.charecters);
-    // this.wsSubscription = this.subject.subscribe((response: any) => {
-    //   console.log('test', response);
-    //   let data = response;
+  }
 
-    //   console.log('data', data);
-    //   this.chat = [...this.chat, data.message];
-    //   console.log('chat', this.chat);
-    // });
-    // this.userSubscription = this.userService.userChanged.subscribe(
-    //   (user: User) => {
-    //     this.user = user;
-    //     console.log("User in user component ====>",this.user);
-    //   }
-    // );
-    // this.userService.fetchUser();
+  ngOnDestroy(): void {
+    this.charectersSubscription.unsubscribe();
+  }
+
+  onAddCharecter(charecter: Charecter): void {
+    console.log('Charecter clicked: ', charecter);
+    this.userService.addCharecter(charecter);
   }
 }

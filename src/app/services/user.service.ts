@@ -17,6 +17,7 @@ import {
 } from 'rxjs';
 import { map, scan, startWith, switchMap } from 'rxjs/operators';
 import { User } from '../models/user.model';
+import { Charecter } from '../models/charecter.model';
 
 const sampleUser: User = {
   name: 'John Doe',
@@ -31,9 +32,9 @@ const sampleUser: User = {
       image: 'https://res.cloudinary.com/demo/image/twitter/1330457336.jpg',
       fatigue: 0,
       characteristics: {
-        intelect: 15,
-        strength: 15,
-        dexterity: 15,
+        intelect: 25,
+        strength: 25,
+        dexterity: 25,
       },
     },
     {
@@ -44,9 +45,9 @@ const sampleUser: User = {
       image: 'https://res.cloudinary.com/demo/image/twitter/1330457336.jpg',
       fatigue: 0,
       characteristics: {
-        intelect: 15,
-        strength: 15,
-        dexterity: 15,
+        intelect: 25,
+        strength: 25,
+        dexterity: 25,
       },
     },
   ],
@@ -150,7 +151,10 @@ export class UserService {
       this.commandFromTick$.pipe(startWith(this.initialCounterState))
       .subscribe((state) => {
         console.log('state', state);
-        this.user.currencyBalance = state.count!;
+        if(state.count) {
+
+          this.user.currencyBalance = state.count;
+        }
         this.userChanged.next(this.user);
       });
   }
@@ -165,6 +169,12 @@ export class UserService {
 
   fetchUser(): void {
     this.user = sampleUser;
+    this.user.currencyIncome = this.getUserIncome();
+    this.userChanged.next(this.user);
+  }
+  addCharecter(cherecter: Charecter): void {
+    this.user.currencyBalance -= cherecter.price;
+    this.user.charecters.push(cherecter);
     this.user.currencyIncome = this.getUserIncome();
     this.userChanged.next(this.user);
   }
