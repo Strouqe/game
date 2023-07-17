@@ -100,10 +100,11 @@ export class UserService {
   private user: User;
 
   constructor() {
+    // this.fetchUser();
     this.userChanged = new Subject<User>();
 
     this.initialCounterState = {
-      count: 0,
+      count: sampleUser.currencyBalance,
       isTicking: true,
     };
 
@@ -133,7 +134,7 @@ export class UserService {
     );
 
     this.commandFromTick$ = this.isTicking$.pipe(
-      switchMap((isTicking) => (isTicking ? timer(1000, 1000) : NEVER)),
+      switchMap((isTicking) => (isTicking ? timer(0, 15000) : NEVER)),
       withLatestFrom(this.counterState$, (_, counterState) => ({
         count: counterState.count,
       })),

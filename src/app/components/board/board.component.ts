@@ -16,12 +16,12 @@ export class BoardComponent implements OnInit, OnDestroy{
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    // this.userSubscription = this.userService.userChanged.subscribe(
-    //   (user: User) => {
-    //     this.user = user;
-    //     console.log("User in board component ====>",this.user);
-    //   }
-    // );
+    this.userSubscription = this.userService.userChanged.subscribe(
+      (user: User) => {
+        this.user = user;
+        console.log("User in board component ====>",this.user);
+      }
+    );
   }
 
   ngOnDestroy(): void {
